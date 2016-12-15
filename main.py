@@ -19,10 +19,12 @@ class WordMaster(Tkinter.Tk):
         self.parent = parent
         self.initialize()
         self.switchWord(1)
+        self.showMeaning = False
 
     def initialize(self):
         self.grid()
 
+        # word
         self.bind("]", self.onSwitchWord)
         self.bind("[", self.onSwitchWord)
         self.bind("d", self.onPressRemembered)
@@ -31,6 +33,8 @@ class WordMaster(Tkinter.Tk):
         self.bind("2", self.onAnswerQuiz)
         self.bind("3", self.onAnswerQuiz)
         self.bind("4", self.onAnswerQuiz)
+        # display mode
+        self.bind("<space>", self.onSwitchDisplayMode)
 
         # settings
         button = Tkinter.Button(self, text="BTN", command=self.OnButtonClick)
@@ -92,6 +96,9 @@ class WordMaster(Tkinter.Tk):
         self.grid_columnconfigure(0, weight = 1)
         self.defaultColor = quizItem1.cget("bg")
 
+        # init
+        self.equLabel.configure(fg=self.defaultColor)
+        self.desLabel.configure(fg=self.defaultColor)
     def OnButtonClick(self):
         print "you clicked me"
 
@@ -111,6 +118,20 @@ class WordMaster(Tkinter.Tk):
                 data = self.wd.getNextOrPrevWord(delta)
         self.showWord(data)
 
+    def onSwitchDisplayMode(self, event):
+        if event.char == ' ':
+            self.showMeaning = not self.showMeaning
+            self.switchWordDisplayMode(self.showMeaning)
+
+    def switchWordDisplayMode(self, isShowingMeanings):
+        self.showMeaning = isShowingMeanings
+        if self.showMeaning:
+            self.equLabel.configure(fg="#000")
+            self.desLabel.configure(fg="#000")
+        else:
+            self.equLabel.configure(fg=self.defaultColor)
+            self.desLabel.configure(fg=self.defaultColor)
+
     def onSwitchMode(self):
         self.wd.switchBrowsingMode(self.browseMode.get())
 
@@ -129,6 +150,7 @@ class WordMaster(Tkinter.Tk):
             # wrong
             self.quizItems[answer].configure(bg="#f66")
             self.rd.setQuizResult(self.wd.currentWord, False)
+        self.switchWordDisplayMode(True)
         self.updateUserData()
 
     def refreshAnswerItems(self):
@@ -160,6 +182,7 @@ class WordMaster(Tkinter.Tk):
             self.favDisplay.select()
         else:
             self.favDisplay.deselect()
+        self.switchWordDisplayMode(False)
 
     def updateUserData(self):
         # get quiz results
