@@ -156,7 +156,8 @@
 168. breed= reproduce v. 繁殖;饲养
 169. brilliant= bright a. 光辉的;明亮的
 170. brittle= breakable a. 脆弱的
-125. at random= without a definite pattern phr. 随便地; 任意1地71. brittle= fragile a. 脆弱的
+125. at random= without a definite pattern phr. 随便地; 任意1地
+71. brittle= fragile a. 脆弱的
 126. attachment to= preference for n. 依恋
 127. attain =achieve v. 达到;获得
 128. attainment =achievement n. 达到;获得
@@ -1403,7 +1404,8 @@
 1436. vigorous= energetic a. 精力旺盛的
 1437. virtually =nearly ad. 差不多
 1438. virtually =almost ad. 差不多
-1393. unintendedly =occasionally(偶然地) ad. 非计画中 1439. virtually= actually ad. 事实上地
+1393. unintendedly =occasionally(偶然地) ad. 非计画中
+1439. virtually= actually ad. 事实上地
 1394. unique= distinct a. 特有的
 1395. unique= sole(唯一的) a. 特有的
 1396. unique to= only found in a. 特有的
@@ -1452,7 +1454,8 @@
 1461. within= inside ad. 在里面
 1462. withstand= resist v. 承受;经受住
 1463. withstand= tolerate v. 承受;经受住
-1418. variability= tendency to change n. 可变性;反覆不定1464. witness =observe v. 目击
+1418. variability= tendency to change n. 可变性;反覆不定
+1464. witness =observe v. 目击
 1419. variation =difference n. 变更;变化
 1420. varied= different a. 不相同的
 1421. vast= immense a. 巨大的
@@ -1465,7 +1468,6 @@
 1468. yield= produce v. 产生;提供
 1469. yield= provide v. 产生;提供
 1470. zenith= peak n. 顶点
-增补内容
 1. abrupt=sudden adj.突然的
 2. accumulate=build up 积累
 3. arid=dry adj.干旱的

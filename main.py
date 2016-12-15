@@ -51,6 +51,7 @@ class WordMaster(Tkinter.Tk):
 
         # word display
         wordFont = tkFont.Font(size=24)
+        desFont = tkFont.Font(size=18)
 
         self.idLabelVar = Tkinter.StringVar()
         self.idLabel = Tkinter.Label(self, textvariable=self.idLabelVar, anchor="w", padx=self.pad, pady=self.pad, width=50)
@@ -61,11 +62,11 @@ class WordMaster(Tkinter.Tk):
         self.wordLabel.grid(column = 0, row = 3, columnspan = 3)
 
         self.equLabelVar = Tkinter.StringVar()
-        self.equLabel = Tkinter.Label(self, textvariable=self.equLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
+        self.equLabel = Tkinter.Label(self, textvariable=self.equLabelVar, padx=self.pad, pady=self.pad, width=30, font=desFont)
         self.equLabel.grid(column = 0, row = 4, columnspan = 3)
 
         self.desLabelVar = Tkinter.StringVar()
-        self.desLabel = Tkinter.Label(self, textvariable=self.desLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
+        self.desLabel = Tkinter.Label(self, textvariable=self.desLabelVar, padx=self.pad, pady=self.pad, width=30, font=desFont)
         self.desLabel.grid(column = 0, row = 5, columnspan = 3)
 
         # quiz display
@@ -126,8 +127,8 @@ class WordMaster(Tkinter.Tk):
     def switchWordDisplayMode(self, isShowingMeanings):
         self.showMeaning = isShowingMeanings
         if self.showMeaning:
-            self.equLabel.configure(fg="#000")
-            self.desLabel.configure(fg="#000")
+            self.equLabel.configure(fg="#555")
+            self.desLabel.configure(fg="#555")
         else:
             self.equLabel.configure(fg=self.defaultColor)
             self.desLabel.configure(fg=self.defaultColor)
