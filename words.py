@@ -6,6 +6,7 @@ class Words:
         self.loadWords()
         self.currentID = 0
         self.currentWord = ""
+        self.currentOriID = ""
         self.numOfWords = len(self.data)
         self.browseMode = "id"
 
@@ -14,6 +15,7 @@ class Words:
             self.data = json.load(data_file)
 
     def readWord(self, id):
+        self.currentOriID = self.data[id][0]
         self.currentWord = self.data[id][1]
         return {
             "oriID": self.data[id][0],

@@ -13,21 +13,23 @@ class UserRecorder:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
     # make sure there is record of the word
-    def checkRecord(self, word):
-        if word in self.data:
+    def checkRecord(self, oriID, word):
+        id = oriID + word
+        if id in self.data:
             pass
         else:
-            self.data[word] = {}
+            self.data[id] = {}
 
-    def setWordRemembered(self, word):
-        self.checkRecord(word)
-        self.data[word]["remembered"] = True
+    def setWordRemembered(self, oriID, word):
+        self.checkRecord(oriID, word)
+        self.data[oriID + word]["remembered"] = True
         self.save()
 
-    def getWordRemembered(self, word):
-        if word in self.data:
-            if "remembered" in self.data[word]:
-                if self.data[word]["remembered"]:
+    def getWordRemembered(self, oriID, word):
+        id = oriID + word
+        if id in self.data:
+            if "remembered" in self.data[id]:
+                if self.data[id]["remembered"]:
                     return True
                 else:
                     return False

@@ -1,9 +1,8 @@
 import Tkinter
 import tkFont
-import json
-import io
 from userrecorder import *
 from words import *
+from stat import *
 
 class WordMaster(Tkinter.Tk):
 
@@ -13,6 +12,8 @@ class WordMaster(Tkinter.Tk):
         self.wd = Words()
         # user data
         self.rd = UserRecorder()
+        # stat
+        self.st = Stat()
         # gui
         self.pad = 10
         Tkinter.Tk.__init__(self, parent)
@@ -88,18 +89,23 @@ class WordMaster(Tkinter.Tk):
         # user display
         self.favDisplay = Tkinter.Checkbutton(text = "Delete this word")
         self.favDisplay.grid(column = 0, row = 7, sticky="W")
+        self.todayCountVar = Tkinter.StringVar()
         self.quizRightVar = Tkinter.StringVar()
         self.quizWrongVar = Tkinter.StringVar()
+        todayCount = Tkinter.Label(self, textvariable=self.todayCountVar, width=10)
         quizResultRight = Tkinter.Label(self, bg="#8f8", textvariable=self.quizRightVar, width=3)
         quizResultWrong = Tkinter.Label(self, bg="#f88", textvariable=self.quizWrongVar, width=3)
-        quizResultRight.grid(column = 1, row = 7, sticky = "W")
-        quizResultWrong.grid(column = 2, row = 7, sticky = "W")
+        todayCount.grid(column=1, row = 7, sticky="E")
+        quizResultRight.grid(column = 2, row = 7, sticky = "W")
+        quizResultWrong.grid(column = 3, row = 7, sticky = "W")
         self.grid_columnconfigure(0, weight = 1)
         self.defaultColor = quizItem1.cget("bg")
 
         # init
         self.equLabel.configure(fg=self.defaultColor)
         self.desLabel.configure(fg=self.defaultColor)
+
+
     def OnButtonClick(self):
         print "you clicked me"
 
@@ -138,7 +144,7 @@ class WordMaster(Tkinter.Tk):
 
     def onPressRemembered(self, event):
         self.favDisplay.select()
-        self.rd.setWordRemembered(self.wd.currentWord)
+        self.rd.setWordRemembered(self.wd.currentOriID, self.wd.currentWord)
 
     def onAnswerQuiz(self, event):
         self.refreshAnswerItems()
@@ -147,6 +153,8 @@ class WordMaster(Tkinter.Tk):
             # right
             self.quizItems[answer].configure(bg="#6f6")
             self.rd.setQuizResult(self.wd.currentWord, True)
+            # stat
+            self.st.dateCount()
         else:
             # wrong
             self.quizItems[answer].configure(bg="#f66")
@@ -160,7 +168,7 @@ class WordMaster(Tkinter.Tk):
 
     def checkWord(self, data):
         # check if remembered
-        if self.rd.getWordRemembered(data["word"]):
+        if self.rd.getWordRemembered(data["oriID"], data["word"]):
             return False
         else:
             return True
@@ -179,7 +187,7 @@ class WordMaster(Tkinter.Tk):
             self.quizVars[i].set(prefix[i] + quiz["set"][i])
         self.updateUserData()
         # get data
-        if self.rd.getWordRemembered(data["word"]):
+        if self.rd.getWordRemembered(data["oriID"], data["word"]):
             self.favDisplay.select()
         else:
             self.favDisplay.deselect()
@@ -190,6 +198,8 @@ class WordMaster(Tkinter.Tk):
         quizResult = self.rd.getQuizResult(self.wd.currentWord)
         self.quizRightVar.set(quizResult[0])
         self.quizWrongVar.set(quizResult[1])
+        # load stat
+        self.todayCountVar.set(self.st.getDateCount())
 
 if __name__ == "__main__":
     wm = WordMaster(None)

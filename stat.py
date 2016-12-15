@@ -14,6 +14,7 @@ class Stat:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
     def getDateCount(self):
+        # type: () -> object
         dateStamp = datetime.date.today().isoformat()
         if dateStamp in self.data["counter"]:
             return self.data["counter"][dateStamp]
@@ -26,4 +27,4 @@ class Stat:
             self.data['counter'][dateStamp] = int(self.data['counter'][dateStamp]) + 1
         else:
             self.data['counter'][dateStamp] = 1
-        
+        self.save()
