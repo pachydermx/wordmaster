@@ -2,7 +2,7 @@ import Tkinter
 import tkFont
 from userrecorder import *
 from words import *
-from stat import *
+from statwork import *
 
 class WordMaster(Tkinter.Tk):
 
