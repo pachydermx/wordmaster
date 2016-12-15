@@ -18,7 +18,7 @@ class WordMaster(Tkinter.Tk):
         Tkinter.Tk.__init__(self, parent)
         self.parent = parent
         self.initialize()
-        self.showWord(self.wd.getNextOrPrevWord(1))
+        self.switchWord(1)
 
     def initialize(self):
         self.grid()
@@ -32,32 +32,42 @@ class WordMaster(Tkinter.Tk):
         self.bind("3", self.onAnswerQuiz)
         self.bind("4", self.onAnswerQuiz)
 
+        # settings
         button = Tkinter.Button(self, text="BTN", command=self.OnButtonClick)
-        button.grid(column = 1, row = 0)
+        #button.grid(column = 0, row = 0)
+
+        self.browseMode = Tkinter.StringVar()
+        bMode1 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="By ID", variable=self.browseMode, value="id")
+        bMode2 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="Shuffle", variable=self.browseMode, value="sf")
+        bMode3 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="Incorrect Rate", variable=self.browseMode, value="ir")
+        bMode1.grid(column = 0, row = 0, sticky="E")
+        bMode2.grid(column = 1, row = 0, sticky="E")
+        bMode3.grid(column = 2, row = 0, sticky="E")
+        self.browseMode.set("id")
 
         # word display
         wordFont = tkFont.Font(size=24)
 
         self.idLabelVar = Tkinter.StringVar()
         self.idLabel = Tkinter.Label(self, textvariable=self.idLabelVar, anchor="w", padx=self.pad, pady=self.pad, width=50)
-        self.idLabel.grid(column = 0, row = 2, columnspan = 2)
+        self.idLabel.grid(column = 0, row = 2, columnspan = 3)
 
         self.wordLabelVar = Tkinter.StringVar()
         self.wordLabel = Tkinter.Label(self, textvariable=self.wordLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
-        self.wordLabel.grid(column = 0, row = 3, columnspan = 2)
+        self.wordLabel.grid(column = 0, row = 3, columnspan = 3)
 
         self.equLabelVar = Tkinter.StringVar()
         self.equLabel = Tkinter.Label(self, textvariable=self.equLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
-        self.equLabel.grid(column = 0, row = 4, columnspan = 2)
+        self.equLabel.grid(column = 0, row = 4, columnspan = 3)
 
         self.desLabelVar = Tkinter.StringVar()
         self.desLabel = Tkinter.Label(self, textvariable=self.desLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
-        self.desLabel.grid(column = 0, row = 5, columnspan = 2)
+        self.desLabel.grid(column = 0, row = 5, columnspan = 3)
 
         # quiz display
         quizFont = tkFont.Font(size=18)
         self.quizDisplay = Tkinter.Frame(self)
-        self.quizDisplay.grid(column = 0, row = 6, columnspan = 2)
+        self.quizDisplay.grid(column = 0, row = 6, columnspan = 3)
         self.quizDisplay.grid_columnconfigure(0, weight=1)
         self.quizVars = [Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar()]
         quizItem1 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[0], font=quizFont)
@@ -86,11 +96,23 @@ class WordMaster(Tkinter.Tk):
         print "you clicked me"
 
     def onSwitchWord(self, event):
-        self.refreshAnswerItems()
         if event.char == '[':
-            self.showWord(self.wd.getNextOrPrevWord(-1))
+            self.switchWord(-1)
         else:
-            self.showWord(self.wd.getNextOrPrevWord(1))
+            self.switchWord(1)
+
+    def switchWord(self, delta):
+        self.refreshAnswerItems()
+        data = self.wd.getNextOrPrevWord(delta)
+        while True:
+            if self.checkWord(data):
+                break
+            else:
+                data = self.wd.getNextOrPrevWord(delta)
+        self.showWord(data)
+
+    def onSwitchMode(self):
+        self.wd.switchBrowsingMode(self.browseMode.get())
 
     def onPressRemembered(self, event):
         self.favDisplay.select()
@@ -112,6 +134,13 @@ class WordMaster(Tkinter.Tk):
     def refreshAnswerItems(self):
         for i in range(0, 4):
             self.quizItems[i].configure(bg=self.defaultColor)
+
+    def checkWord(self, data):
+        # check if remembered
+        if self.rd.getWordRemembered(data["word"]):
+            return False
+        else:
+            return True
 
     def showWord(self, data):
         # update ui

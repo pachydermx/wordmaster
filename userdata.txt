@@ -1,1 +1,1 @@
-{" despite": {"quizRight": 1}, " a solicitation of ": {"remembered": true, "quizRight": 6, "quizWrong": 1}, " abandoned": {"remembered": true}}
+{" despite": {"quizRight": 1}, " a solicitation of ": {"remembered": true, "quizRight": 6, "quizWrong": 2}, " a matter of speculation ": {"remembered": true, "quizRight": 1}, " abandoned": {"remembered": true}}

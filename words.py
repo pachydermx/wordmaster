@@ -7,6 +7,7 @@ class Words:
         self.currentID = 0
         self.currentWord = ""
         self.numOfWords = len(self.data)
+        self.browseMode = "id"
 
     def loadWords(self):
         with open('data.txt') as data_file:
@@ -22,8 +23,11 @@ class Words:
         }
 
     def getNextOrPrevWord(self, delta):
-        self.currentID += delta
-        return self.readWord(self.currentID)
+        if self.browseMode == "id":
+            self.currentID += delta
+            return self.readWord(self.currentID)
+        if self.browseMode == "sf":
+            return self.readWord(random.randint(0, self.numOfWords))
 
     def getQuizItems(self):
         result = []
@@ -37,6 +41,8 @@ class Words:
                 result.append(randomEqu)
         return {"correct": correct, "set": result}
 
+    def switchBrowsingMode(self, mode):
+        self.browseMode = mode
 
 if __name__ == "__main__":
     wd = Words()
