@@ -63,7 +63,19 @@ class UserRecorder:
                 result[1] = self.data[id]["quizWrong"]
         return result
 
+    def getStat(self):
+        sumRemembered = 0
+        sumRight = 0
+        sumWrong = 0
+        for id in self.data:
+            if "remembered" in self.data[id]:
+                sumRemembered += 1
+            if "quizRight" in self.data[id]:
+                sumRight += int(self.data[id]["quizRight"])
+            if "quizWrong" in self.data[id]:
+                sumWrong += int(self.data[id]["quizWrong"])
+        return [sumRemembered, sumRight, sumWrong]
 
 if __name__ == "__main__":
     rd = UserRecorder()
-    print rd.getWordRemembered(" a solicitation of ")
+    print rd.getStat()

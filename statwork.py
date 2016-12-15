@@ -28,3 +28,8 @@ class Stat:
         else:
             self.data['counter'][dateStamp] = 1
         self.save()
+
+    def getTargetD(self, numOfWords, numOfRememberedWords, RightSum, WrongSum):
+        activeWords = numOfWords - numOfRememberedWords
+        deltaSum = RightSum - WrongSum
+        return (deltaSum / float(activeWords)) + 1

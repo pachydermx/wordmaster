@@ -22,6 +22,11 @@ class WordMaster(Tkinter.Tk):
         self.switchWord(1)
         self.showMeaning = False
 
+        # get target
+        rdStat = self.rd.getStat()
+        self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
+        print self.target
+
     def initialize(self):
         self.grid()
 
