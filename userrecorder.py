@@ -36,6 +36,30 @@ class UserRecorder:
         else:
             return False
 
+    def setQuizResult(self, word, isRight):
+        self.checkRecord(word)
+        if isRight:
+            if "quizRight" in self.data[word]:
+                self.data[word]["quizRight"] = int(self.data[word]["quizRight"]) + 1
+            else:
+                self.data[word]["quizRight"] = 1
+        else:
+            if "quizWrong" in self.data[word]:
+                self.data[word]["quizWrong"] = int(self.data[word]["quizWrong"]) + 1
+            else:
+                self.data[word]["quizWrong"] = 1
+        self.save()
+
+    def getQuizResult(self, word):
+        result = [0, 0]
+        if word in self.data:
+            if "quizRight" in self.data[word]:
+                result[0] = self.data[word]["quizRight"]
+            if "quizWrong" in self.data[word]:
+                result[1] = self.data[word]["quizWrong"]
+        return result
+
+
 if __name__ == "__main__":
     rd = UserRecorder()
     print rd.getWordRemembered(" a solicitation of ")

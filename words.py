@@ -5,6 +5,7 @@ class Words:
     def __init__(self):
         self.loadWords()
         self.currentID = 0
+        self.currentWord = ""
         self.numOfWords = len(self.data)
 
     def loadWords(self):
@@ -12,6 +13,7 @@ class Words:
             self.data = json.load(data_file)
 
     def readWord(self, id):
+        self.currentWord = self.data[id][1]
         return {
             "oriID": self.data[id][0],
             "word": self.data[id][1],
@@ -21,12 +23,11 @@ class Words:
 
     def getNextOrPrevWord(self, delta):
         self.currentID += delta
-        print self.readWord(self.currentID)
         return self.readWord(self.currentID)
 
     def getQuizItems(self):
         result = []
-        correct = random.randint(0, 4)
+        correct = random.randint(0, 3)
         for i in range(0, 4):
             if i == correct:
                 result.append(self.data[self.currentID][2])

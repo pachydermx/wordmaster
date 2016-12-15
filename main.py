@@ -18,15 +18,19 @@ class WordMaster(Tkinter.Tk):
         Tkinter.Tk.__init__(self, parent)
         self.parent = parent
         self.initialize()
-        self.currentWord = ""
+        self.showWord(self.wd.getNextOrPrevWord(1))
 
     def initialize(self):
         self.grid()
 
-        self.bind("a", self.OnPressEnter)
-        self.bind("]", self.onPressNext)
-        self.bind("[", self.onPressPrev)
+        self.bind("]", self.onSwitchWord)
+        self.bind("[", self.onSwitchWord)
         self.bind("d", self.onPressRemembered)
+        # quiz
+        self.bind("1", self.onAnswerQuiz)
+        self.bind("2", self.onAnswerQuiz)
+        self.bind("3", self.onAnswerQuiz)
+        self.bind("4", self.onAnswerQuiz)
 
         button = Tkinter.Button(self, text="BTN", command=self.OnButtonClick)
         button.grid(column = 1, row = 0)
@@ -64,28 +68,50 @@ class WordMaster(Tkinter.Tk):
         quizItem3.grid(column = 0, row=2, sticky="W")
         quizItem4 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[3], font=quizFont)
         quizItem4.grid(column = 0, row=3, sticky="W")
+        self.quizItems = [quizItem1, quizItem2, quizItem3, quizItem4]
 
         # user display
         self.favDisplay = Tkinter.Checkbutton(text = "Delete this word")
         self.favDisplay.grid(column = 0, row = 7, sticky="W")
-
+        self.quizRightVar = Tkinter.StringVar()
+        self.quizWrongVar = Tkinter.StringVar()
+        quizResultRight = Tkinter.Label(self, bg="#8f8", textvariable=self.quizRightVar, width=3)
+        quizResultWrong = Tkinter.Label(self, bg="#f88", textvariable=self.quizWrongVar, width=3)
+        quizResultRight.grid(column = 1, row = 7, sticky = "W")
+        quizResultWrong.grid(column = 2, row = 7, sticky = "W")
         self.grid_columnconfigure(0, weight = 1)
+        self.defaultColor = quizItem1.cget("bg")
 
     def OnButtonClick(self):
         print "you clicked me"
 
-    def OnPressEnter(self, event):
-        self.idLabelVar.set("loaded")
-
-    def onPressPrev(self, event):
-        self.showWord(self.wd.getNextOrPrevWord(-1))
-
-    def onPressNext(self, event):
-        self.showWord(self.wd.getNextOrPrevWord(1))
+    def onSwitchWord(self, event):
+        self.refreshAnswerItems()
+        if event.char == '[':
+            self.showWord(self.wd.getNextOrPrevWord(-1))
+        else:
+            self.showWord(self.wd.getNextOrPrevWord(1))
 
     def onPressRemembered(self, event):
         self.favDisplay.select()
-        self.rd.setWordRemembered(self.currentWord)
+        self.rd.setWordRemembered(self.wd.currentWord)
+
+    def onAnswerQuiz(self, event):
+        self.refreshAnswerItems()
+        answer = int(event.char) - 1
+        if int(self.currentQuiz["correct"]) == answer:
+            # right
+            self.quizItems[answer].configure(bg="#6f6")
+            self.rd.setQuizResult(self.wd.currentWord, True)
+        else:
+            # wrong
+            self.quizItems[answer].configure(bg="#f66")
+            self.rd.setQuizResult(self.wd.currentWord, False)
+        self.updateUserData()
+
+    def refreshAnswerItems(self):
+        for i in range(0, 4):
+            self.quizItems[i].configure(bg=self.defaultColor)
 
     def showWord(self, data):
         # update ui
@@ -95,14 +121,22 @@ class WordMaster(Tkinter.Tk):
         self.desLabelVar.set(data["des"])
         # get quiz
         quiz = self.wd.getQuizItems()
+        self.currentQuiz = quiz
         prefix = ["1.", "2.", "3.", "4."]
         for i in range(0, 4):
             self.quizVars[i].set(prefix[i] + quiz["set"][i])
+        self.updateUserData()
         # get data
         if self.rd.getWordRemembered(data["word"]):
             self.favDisplay.select()
         else:
             self.favDisplay.deselect()
+
+    def updateUserData(self):
+        # get quiz results
+        quizResult = self.rd.getQuizResult(self.wd.currentWord)
+        self.quizRightVar.set(quizResult[0])
+        self.quizWrongVar.set(quizResult[1])
 
 if __name__ == "__main__":
     wm = WordMaster(None)
