@@ -38,7 +38,7 @@ class Words:
             if i == correct:
                 result.append(self.data[self.currentID][2])
             else:
-                randomID = random.randint(0, self.numOfWords)
+                randomID = random.randint(0, self.numOfWords - 1)
                 randomEqu = self.data[randomID][2]
                 result.append(randomEqu)
         return {"correct": correct, "set": result}

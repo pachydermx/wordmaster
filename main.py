@@ -152,13 +152,13 @@ class WordMaster(Tkinter.Tk):
         if int(self.currentQuiz["correct"]) == answer:
             # right
             self.quizItems[answer].configure(bg="#6f6")
-            self.rd.setQuizResult(self.wd.currentWord, True)
+            self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, True)
             # stat
             self.st.dateCount()
         else:
             # wrong
             self.quizItems[answer].configure(bg="#f66")
-            self.rd.setQuizResult(self.wd.currentWord, False)
+            self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, False)
         self.switchWordDisplayMode(True)
         self.updateUserData()
 
@@ -195,7 +195,7 @@ class WordMaster(Tkinter.Tk):
 
     def updateUserData(self):
         # get quiz results
-        quizResult = self.rd.getQuizResult(self.wd.currentWord)
+        quizResult = self.rd.getQuizResult(self.wd.currentOriID, self.wd.currentWord)
         self.quizRightVar.set(quizResult[0])
         self.quizWrongVar.set(quizResult[1])
         # load stat

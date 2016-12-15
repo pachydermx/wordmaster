@@ -38,27 +38,29 @@ class UserRecorder:
         else:
             return False
 
-    def setQuizResult(self, word, isRight):
-        self.checkRecord(word)
+    def setQuizResult(self, oriID, word, isRight):
+        id = oriID + word
+        self.checkRecord(oriID, word)
         if isRight:
-            if "quizRight" in self.data[word]:
-                self.data[word]["quizRight"] = int(self.data[word]["quizRight"]) + 1
+            if "quizRight" in self.data[id]:
+                self.data[id]["quizRight"] = int(self.data[id]["quizRight"]) + 1
             else:
-                self.data[word]["quizRight"] = 1
+                self.data[id]["quizRight"] = 1
         else:
-            if "quizWrong" in self.data[word]:
-                self.data[word]["quizWrong"] = int(self.data[word]["quizWrong"]) + 1
+            if "quizWrong" in self.data[id]:
+                self.data[id]["quizWrong"] = int(self.data[id]["quizWrong"]) + 1
             else:
-                self.data[word]["quizWrong"] = 1
+                self.data[id]["quizWrong"] = 1
         self.save()
 
-    def getQuizResult(self, word):
+    def getQuizResult(self, oriID, word):
+        id = oriID + word
         result = [0, 0]
-        if word in self.data:
-            if "quizRight" in self.data[word]:
-                result[0] = self.data[word]["quizRight"]
-            if "quizWrong" in self.data[word]:
-                result[1] = self.data[word]["quizWrong"]
+        if id in self.data:
+            if "quizRight" in self.data[id]:
+                result[0] = self.data[id]["quizRight"]
+            if "quizWrong" in self.data[id]:
+                result[1] = self.data[id]["quizWrong"]
         return result
 
 

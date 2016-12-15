@@ -1,1 +1,1 @@
-{"3 abandoned": {"remembered": true}, "﻿1 a matter of speculation ": {"remembered": true}, " abandoned": {"remembered": true}, "2 a solicitation of ": {"remembered": true}, " abstract": {"quizRight": 1}, " abort": {"quizRight": 11}, " a solicitation of ": {"remembered": true, "quizRight": 6, "quizWrong": 2}, " a matter of speculation ": {"remembered": true, "quizRight": 1}, " despite": {"quizRight": 1}, " throughout": {"quizRight": 1}, " aberrant": {"quizWrong": 1}, " abruptly": {"quizRight": 4}}
+{"5 abort": {"quizRight": 3}}
