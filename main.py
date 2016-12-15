@@ -55,12 +55,15 @@ class WordMaster(Tkinter.Tk):
         self.quizDisplay = Tkinter.Frame(self)
         self.quizDisplay.grid(column = 0, row = 6, columnspan = 2)
         self.quizDisplay.grid_columnconfigure(0, weight=1)
-        quizItem1 = Tkinter.Label(self.quizDisplay, text="A", font=quizFont)
+        self.quizVars = [Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar()]
+        quizItem1 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[0], font=quizFont)
         quizItem1.grid(column = 0, row=0, sticky="W")
-        quizItem2 = Tkinter.Label(self.quizDisplay, text="B", font=quizFont)
-        quizItem2.grid(column = 1, row=0)
-        quizItem3 = Tkinter.Label(self.quizDisplay, text="C", font=quizFont)
-        quizItem3.grid(column = 2, row=0, sticky="E")
+        quizItem2 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[1], font=quizFont)
+        quizItem2.grid(column = 0, row=1, sticky="W")
+        quizItem3 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[2], font=quizFont)
+        quizItem3.grid(column = 0, row=2, sticky="W")
+        quizItem4 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[3], font=quizFont)
+        quizItem4.grid(column = 0, row=3, sticky="W")
 
         # user display
         self.favDisplay = Tkinter.Checkbutton(text = "Delete this word")
@@ -90,12 +93,16 @@ class WordMaster(Tkinter.Tk):
         self.wordLabelVar.set(data["word"])
         self.equLabelVar.set(data["equ"])
         self.desLabelVar.set(data["des"])
+        # get quiz
+        quiz = self.wd.getQuizItems()
+        prefix = ["1.", "2.", "3.", "4."]
+        for i in range(0, 4):
+            self.quizVars[i].set(prefix[i] + quiz["set"][i])
         # get data
         if self.rd.getWordRemembered(data["word"]):
             self.favDisplay.select()
         else:
             self.favDisplay.deselect()
-
 
 if __name__ == "__main__":
     wm = WordMaster(None)
