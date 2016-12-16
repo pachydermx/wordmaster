@@ -25,7 +25,7 @@ class WordMaster(Tkinter.Tk):
         # get target
         rdStat = self.rd.getStat()
         self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
-        print self.target
+        self.targetVar.set("Target :" + str(int(self.target)))
 
     def initialize(self):
         self.grid()
@@ -97,12 +97,17 @@ class WordMaster(Tkinter.Tk):
         self.todayCountVar = Tkinter.StringVar()
         self.quizRightVar = Tkinter.StringVar()
         self.quizWrongVar = Tkinter.StringVar()
+        self.targetVar = Tkinter.StringVar()
         todayCount = Tkinter.Label(self, textvariable=self.todayCountVar, width=10)
+        targetLabel = Tkinter.Label(self, textvariable=self.targetVar, width=10)
         quizResultRight = Tkinter.Label(self, bg="#8f8", textvariable=self.quizRightVar, width=3)
         quizResultWrong = Tkinter.Label(self, bg="#f88", textvariable=self.quizWrongVar, width=3)
         todayCount.grid(column=1, row = 7, sticky="E")
-        quizResultRight.grid(column = 2, row = 7, sticky = "W")
-        quizResultWrong.grid(column = 3, row = 7, sticky = "W")
+        targetLabel.grid(column=2, row = 7, sticky="E")
+        quizResultRight.grid(column = 3, row = 7, sticky = "W")
+        quizResultWrong.grid(column = 4, row = 7, sticky = "W")
+
+        # misc settings
         self.grid_columnconfigure(0, weight = 1)
         self.defaultColor = quizItem1.cget("bg")
 

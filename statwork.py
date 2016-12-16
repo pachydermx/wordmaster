@@ -17,9 +17,9 @@ class Stat:
         # type: () -> object
         dateStamp = datetime.date.today().isoformat()
         if dateStamp in self.data["counter"]:
-            return self.data["counter"][dateStamp]
+            return "Today: " + str(self.data["counter"][dateStamp])
         else:
-            return 0
+            return "Today: 0"
 
     def dateCount(self):
         dateStamp = datetime.date.today().isoformat()
