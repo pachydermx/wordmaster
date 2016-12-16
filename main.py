@@ -18,6 +18,8 @@ class WordMaster(QWidget):
         # stat
         self.st = Stat()
 
+        # settings
+        self.filter = False
         # gui (tk)
         self.pad = 10
 
@@ -30,6 +32,7 @@ class WordMaster(QWidget):
         self.switchWord(1)
         self.showMeaning = False
 
+
         # get target
         rdStat = self.rd.getStat()
         self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
@@ -39,6 +42,7 @@ class WordMaster(QWidget):
         # init widgets
         self.oriIDLabel = QLabel(u'199.')
         self.shuffleCheck = QCheckBox(u'Shuffle')
+        self.filterCheck = QCheckBox(u'New Words Only')
 
         self.wordLabel = QLabel(u'Example Word')
         self.equLabel = QLabel(u'Example Equ')
@@ -67,8 +71,10 @@ class WordMaster(QWidget):
         desFont = QFont("Arial", 18)
         self.equLabel.setFont(desFont)
         self.equLabel.setAlignment(Qt.AlignCenter)
+        self.equLabel.setMaximumHeight(24)
         self.desLabel.setFont(desFont)
         self.desLabel.setAlignment(Qt.AlignCenter)
+        self.desLabel.setMaximumHeight(24)
 
         quizFont = QFont("Arial", 18)
         for item in self.quizItems:
@@ -83,6 +89,11 @@ class WordMaster(QWidget):
         # set grid
         grid = QGridLayout()
 
+        topToolBar = QHBoxLayout()
+        topToolBar.setAlignment(Qt.AlignCenter)
+        topToolBar.addWidget(self.filterCheck)
+        topToolBar.addWidget(self.shuffleCheck)
+
         statusBar = QHBoxLayout()
         statusBar.addWidget(self.deleteCheck)
 
@@ -93,10 +104,6 @@ class WordMaster(QWidget):
         quizArea = QVBoxLayout()
         for item in self.quizItems:
             quizArea.addWidget(item)
-
-        topToolBar = QHBoxLayout()
-        topToolBar.setAlignment(Qt.AlignCenter)
-        topToolBar.addWidget(self.shuffleCheck)
 
         userdataBar = QHBoxLayout()
         userdataBar.setAlignment(Qt.AlignRight)
@@ -122,6 +129,7 @@ class WordMaster(QWidget):
 
         # add links
         self.shuffleCheck.stateChanged.connect(self.onSwitchMode)
+        self.filterCheck.stateChanged.connect(self.onSwitchMode)
 
         self.show()
 
@@ -167,10 +175,16 @@ class WordMaster(QWidget):
             self.desLabel.setStyleSheet(u'QLabel { color: transparent; }')
 
     def onSwitchMode(self):
+        # display mode
         mode = "id"
         if self.shuffleCheck.isChecked():
             mode = "sf"
         self.wd.switchBrowsingMode(mode)
+        # filter mode
+        if self.filterCheck.isChecked():
+            self.filter = True
+        else:
+            self.filter = False
 
     def onPressRemembered(self):
         self.favDisplay.select()
@@ -201,6 +215,11 @@ class WordMaster(QWidget):
         if self.rd.getWordRemembered(data["oriID"], data["word"]):
             return False
         else:
+            # check if below target
+            if self.filter:
+                quizResult = self.rd.getQuizResult(data['oriID'], data['word'])
+                if quizResult[0] - quizResult[1] >= int(self.target):
+                    return False
             return True
 
     def showWord(self, data):

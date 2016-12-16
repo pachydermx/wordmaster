@@ -1,1 +1,1 @@
-{"2 a solicitation of ": {"remembered": true}, "3 abandoned": {"quizRight": 2, "quizWrong": 4}, "8 absorb": {"quizRight": 1}, "5 abort": {"quizRight": 4}, "81 subsequent": {"quizRight": 1, "quizWrong": 3}}
+{"81 subsequent": {"quizRight": 1, "quizWrong": 3}, "6 abruptly": {"quizRight": 1}, "9 absorb": {"quizRight": 2}, "5 abort": {"quizRight": 4}, "8 absorb": {"quizRight": 2}, "3 abandoned": {"quizRight": 6, "quizWrong": 4}, "7 absorb ": {"quizRight": 3, "quizWrong": 1}, "2 a solicitation of ": {"remembered": true}}
