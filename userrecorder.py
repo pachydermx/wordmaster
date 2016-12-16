@@ -10,7 +10,7 @@ class UserRecorder:
 
     def save(self):
         with io.open("userdata.txt", "w", encoding="utf-8") as f:
-            f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
+            f.write(json.dumps(self.data, ensure_ascii=False))
 
     # make sure there is record of the word
     def checkRecord(self, oriID, word):
@@ -78,4 +78,3 @@ class UserRecorder:
 
 if __name__ == "__main__":
     rd = UserRecorder()
-    print rd.getStat()

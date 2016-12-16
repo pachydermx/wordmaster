@@ -11,7 +11,7 @@ class Words:
         self.browseMode = "id"
 
     def loadWords(self):
-        with open('data.txt') as data_file:
+        with open('data.txt', 'r', encoding='utf-8') as data_file:
             self.data = json.load(data_file)
 
     def readWord(self, id):
@@ -48,4 +48,3 @@ class Words:
 
 if __name__ == "__main__":
     wd = Words()
-    print wd.getQuizItems()

@@ -2,8 +2,9 @@ import sys
 from userrecorder import *
 from words import *
 from statwork import *
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 class WordMaster(QWidget):
 
@@ -34,7 +35,7 @@ class WordMaster(QWidget):
         # get target
         rdStat = self.rd.getStat()
         self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
-        self.targetLabel.setText(QString("Target: " + str(int(self.target))))
+        self.targetLabel.setText("Target: " + str(int(self.target)))
 
     def initUI(self):
         # init widgets
@@ -223,16 +224,16 @@ class WordMaster(QWidget):
 
     def showWord(self, data):
         # update ui
-        self.oriIDLabel.setText(QString(data["oriID"]))
-        self.wordLabel.setText(QString(data['word']))
-        self.equLabel.setText(QString(data['equ']))
-        self.desLabel.setText(QString(data['des']))
+        self.oriIDLabel.setText(data["oriID"])
+        self.wordLabel.setText(data['word'])
+        self.equLabel.setText(data['equ'])
+        self.desLabel.setText(data['des'])
         # get quiz
         quiz = self.wd.getQuizItems()
         self.currentQuiz = quiz
         prefix = ["1.", "2.", "3.", "4."]
         for i in range(0, 4):
-            self.quizItems[i].setText(QString(prefix[i] + quiz['set'][i]))
+            self.quizItems[i].setText(prefix[i] + quiz['set'][i])
         self.updateUserData()
         # get data
         if self.rd.getWordRemembered(data["oriID"], data["word"]):
@@ -244,10 +245,10 @@ class WordMaster(QWidget):
     def updateUserData(self):
         # get quiz results
         quizResult = self.rd.getQuizResult(self.wd.currentOriID, self.wd.currentWord)
-        self.rightCountLabel.setText(QString(str(quizResult[0])))
-        self.wrongCountLabel.setText(QString(str(quizResult[1])))
+        self.rightCountLabel.setText(str(quizResult[0]))
+        self.wrongCountLabel.setText(str(quizResult[1]))
         # load stat
-        self.countLabel.setText(QString(self.st.getDateCount()))
+        self.countLabel.setText(self.st.getDateCount())
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
