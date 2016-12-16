@@ -1,12 +1,15 @@
+import sys
 import Tkinter
 import tkFont
 from userrecorder import *
 from words import *
 from statwork import *
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 
-class WordMaster(Tkinter.Tk):
+class WordMaster(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self):
         # data
         # words
         self.wd = Words()
@@ -14,116 +17,131 @@ class WordMaster(Tkinter.Tk):
         self.rd = UserRecorder()
         # stat
         self.st = Stat()
-        # gui
+
+        # gui (tk)
         self.pad = 10
-        Tkinter.Tk.__init__(self, parent)
-        self.parent = parent
-        self.initialize()
+
+        # gui (qt)
+        super(WordMaster, self).__init__()
+        self.initUI()
+
+        # gui after work
+        self.setWindowTitle("WordMaster")
         self.switchWord(1)
         self.showMeaning = False
 
         # get target
         rdStat = self.rd.getStat()
         self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
-        self.targetVar.set("Target :" + str(int(self.target)))
+        self.targetLabel.setText(QString("Target: " + str(int(self.target))))
 
-    def initialize(self):
-        self.grid()
+    def initUI(self):
+        # init widgets
+        self.oriIDLabel = QLabel(u'199.')
+        self.shuffleCheck = QCheckBox(u'Shuffle')
 
-        # word
-        self.bind("]", self.onSwitchWord)
-        self.bind("[", self.onSwitchWord)
-        self.bind("d", self.onPressRemembered)
-        # quiz
-        self.bind("1", self.onAnswerQuiz)
-        self.bind("2", self.onAnswerQuiz)
-        self.bind("3", self.onAnswerQuiz)
-        self.bind("4", self.onAnswerQuiz)
-        # display mode
-        self.bind("<space>", self.onSwitchDisplayMode)
+        self.wordLabel = QLabel(u'Example Word')
+        self.equLabel = QLabel(u'Example Equ')
+        self.desLabel = QLabel(u'Description')
 
-        # settings
-        button = Tkinter.Button(self, text="BTN", command=self.OnButtonClick)
-        #button.grid(column = 0, row = 0)
-
-        self.browseMode = Tkinter.StringVar()
-        bMode1 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="By ID", variable=self.browseMode, value="id")
-        bMode2 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="Shuffle", variable=self.browseMode, value="sf")
-        bMode3 = Tkinter.Radiobutton(self, command=self.onSwitchMode, text="Incorrect Rate", variable=self.browseMode, value="ir")
-        bMode1.grid(column = 0, row = 0, sticky="E")
-        bMode2.grid(column = 1, row = 0, sticky="E")
-        bMode3.grid(column = 2, row = 0, sticky="E")
-        self.browseMode.set("id")
-
-        # word display
-        wordFont = tkFont.Font(size=24)
-        desFont = tkFont.Font(size=18)
-
-        self.idLabelVar = Tkinter.StringVar()
-        self.idLabel = Tkinter.Label(self, textvariable=self.idLabelVar, anchor="w", padx=self.pad, pady=self.pad, width=50)
-        self.idLabel.grid(column = 0, row = 2, columnspan = 3)
-
-        self.wordLabelVar = Tkinter.StringVar()
-        self.wordLabel = Tkinter.Label(self, textvariable=self.wordLabelVar, padx=self.pad, pady=self.pad, width=30, font=wordFont)
-        self.wordLabel.grid(column = 0, row = 3, columnspan = 3)
-
-        self.equLabelVar = Tkinter.StringVar()
-        self.equLabel = Tkinter.Label(self, textvariable=self.equLabelVar, padx=self.pad, pady=self.pad, width=30, font=desFont)
-        self.equLabel.grid(column = 0, row = 4, columnspan = 3)
-
-        self.desLabelVar = Tkinter.StringVar()
-        self.desLabel = Tkinter.Label(self, textvariable=self.desLabelVar, padx=self.pad, pady=self.pad, width=30, font=desFont)
-        self.desLabel.grid(column = 0, row = 5, columnspan = 3)
-
-        # quiz display
-        quizFont = tkFont.Font(size=18)
-        self.quizDisplay = Tkinter.Frame(self)
-        self.quizDisplay.grid(column = 0, row = 6, columnspan = 3)
-        self.quizDisplay.grid_columnconfigure(0, weight=1)
-        self.quizVars = [Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar(), Tkinter.StringVar()]
-        quizItem1 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[0], font=quizFont)
-        quizItem1.grid(column = 0, row=0, sticky="W")
-        quizItem2 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[1], font=quizFont)
-        quizItem2.grid(column = 0, row=1, sticky="W")
-        quizItem3 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[2], font=quizFont)
-        quizItem3.grid(column = 0, row=2, sticky="W")
-        quizItem4 = Tkinter.Label(self.quizDisplay, textvariable=self.quizVars[3], font=quizFont)
-        quizItem4.grid(column = 0, row=3, sticky="W")
+        quizItem1 = QLabel(u'1. Answer1')
+        quizItem2 = QLabel(u'2. Answer2')
+        quizItem3 = QLabel(u'3. Answer3')
+        quizItem4 = QLabel(u'4. Answer4')
         self.quizItems = [quizItem1, quizItem2, quizItem3, quizItem4]
 
-        # user display
-        self.favDisplay = Tkinter.Checkbutton(text = "Delete this word")
-        self.favDisplay.grid(column = 0, row = 7, sticky="W")
-        self.todayCountVar = Tkinter.StringVar()
-        self.quizRightVar = Tkinter.StringVar()
-        self.quizWrongVar = Tkinter.StringVar()
-        self.targetVar = Tkinter.StringVar()
-        todayCount = Tkinter.Label(self, textvariable=self.todayCountVar, width=10)
-        targetLabel = Tkinter.Label(self, textvariable=self.targetVar, width=10)
-        quizResultRight = Tkinter.Label(self, bg="#8f8", textvariable=self.quizRightVar, width=3)
-        quizResultWrong = Tkinter.Label(self, bg="#f88", textvariable=self.quizWrongVar, width=3)
-        todayCount.grid(column=1, row = 7, sticky="E")
-        targetLabel.grid(column=2, row = 7, sticky="E")
-        quizResultRight.grid(column = 3, row = 7, sticky = "W")
-        quizResultWrong.grid(column = 4, row = 7, sticky = "W")
+        self.deleteCheck = QCheckBox(u'Delete this word')
 
-        # misc settings
-        self.grid_columnconfigure(0, weight = 1)
-        self.defaultColor = quizItem1.cget("bg")
+        self.targetLabel = QLabel(u'Target: 1')
+        self.countLabel = QLabel(u'Count: 299')
+        self.rightCountLabel = QLabel(u'3')
+        self.wrongCountLabel = QLabel(u'0')
 
-        # init
-        self.equLabel.configure(fg=self.defaultColor)
-        self.desLabel.configure(fg=self.defaultColor)
+        # style
+        self.oriIDLabel.setAlignment(Qt.AlignTop)
+        self.oriIDLabel.setMaximumHeight(18)
+        self.shuffleCheck.setMaximumWidth(60)
+        wordFont = QFont("Arial", 24)
+        self.wordLabel.setFont(wordFont)
+        self.wordLabel.setAlignment(Qt.AlignCenter)
+        desFont = QFont("Arial", 18)
+        self.equLabel.setFont(desFont)
+        self.equLabel.setAlignment(Qt.AlignCenter)
+        self.desLabel.setFont(desFont)
+        self.desLabel.setAlignment(Qt.AlignCenter)
 
+        quizFont = QFont("Arial", 18)
+        for item in self.quizItems:
+            item.setAlignment(Qt.AlignCenter)
+            item.setFont(quizFont)
 
-    def OnButtonClick(self):
-        print "you clicked me"
+        self.rightCountLabel.setStyleSheet(u'QLabel { background-color : #8f8; }')
+        self.rightCountLabel.setAlignment(Qt.AlignCenter)
+        self.wrongCountLabel.setStyleSheet(u'QLabel { background-color : #f88; }')
+        self.wrongCountLabel.setAlignment(Qt.AlignCenter)
 
-    def onSwitchWord(self, event):
-        if event.char == '[':
+        # set grid
+        grid = QGridLayout()
+
+        statusBar = QHBoxLayout()
+        statusBar.addWidget(self.deleteCheck)
+
+        desAera = QVBoxLayout()
+        desAera.addWidget(self.equLabel)
+        desAera.addWidget(self.desLabel)
+
+        quizArea = QVBoxLayout()
+        for item in self.quizItems:
+            quizArea.addWidget(item)
+
+        topToolBar = QHBoxLayout()
+        topToolBar.setAlignment(Qt.AlignCenter)
+        topToolBar.addWidget(self.shuffleCheck)
+
+        userdataBar = QHBoxLayout()
+        userdataBar.setAlignment(Qt.AlignRight)
+        userdataBar.addWidget(self.targetLabel)
+        userdataBar.addWidget(self.countLabel)
+        userdataBar.addWidget(self.rightCountLabel)
+        userdataBar.addWidget(self.wrongCountLabel)
+
+        gridCols = 3
+
+        grid.addWidget(self.oriIDLabel, 0, 0, 1, 1)
+        grid.addLayout(topToolBar, 0, 2, 1, 1)
+        grid.addWidget(self.wordLabel, 1, 0, 1, gridCols)
+        grid.addLayout(desAera, 2, 0, 1, gridCols)
+        grid.addLayout(quizArea, 3, 0, 1, gridCols)
+        grid.addLayout(statusBar, 4, 0, 1, 1)
+        grid.addLayout(userdataBar, 4, 1, 1, 2)
+
+        self.setLayout(grid)
+
+        self.setGeometry(300, 300, 800, 600)
+        self.setWindowTitle("WordMaster")
+
+        # add links
+        self.shuffleCheck.stateChanged.connect(self.onSwitchMode)
+
+        self.show()
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_BracketLeft:
             self.switchWord(-1)
-        else:
+        if e.key() == Qt.Key_BracketRight:
             self.switchWord(1)
+        if e.key() == Qt.Key_D:
+            self.onPressRemembered()
+        if e.key() == Qt.Key_1:
+            self.onAnswerQuiz(1)
+        if e.key() == Qt.Key_2:
+            self.onAnswerQuiz(2)
+        if e.key() == Qt.Key_3:
+            self.onAnswerQuiz(3)
+        if e.key() == Qt.Key_4:
+            self.onAnswerQuiz(4)
+        if e.key() == Qt.Key_T:
+            self.onSwitchDisplayMode()
 
     def switchWord(self, delta):
         self.refreshAnswerItems()
@@ -135,46 +153,48 @@ class WordMaster(Tkinter.Tk):
                 data = self.wd.getNextOrPrevWord(delta)
         self.showWord(data)
 
-    def onSwitchDisplayMode(self, event):
-        if event.char == ' ':
-            self.showMeaning = not self.showMeaning
-            self.switchWordDisplayMode(self.showMeaning)
+    def onSwitchDisplayMode(self):
+        self.showMeaning = not self.showMeaning
+        self.switchWordDisplayMode(self.showMeaning)
 
     def switchWordDisplayMode(self, isShowingMeanings):
         self.showMeaning = isShowingMeanings
         if self.showMeaning:
-            self.equLabel.configure(fg="#555")
-            self.desLabel.configure(fg="#555")
+            self.equLabel.setStyleSheet(u'QLabel { color: #555; }')
+            self.desLabel.setStyleSheet(u'QLabel { color: #555; }')
         else:
-            self.equLabel.configure(fg=self.defaultColor)
-            self.desLabel.configure(fg=self.defaultColor)
+            self.equLabel.setStyleSheet(u'QLabel { color: transparent; }')
+            self.desLabel.setStyleSheet(u'QLabel { color: transparent; }')
 
     def onSwitchMode(self):
-        self.wd.switchBrowsingMode(self.browseMode.get())
+        mode = "id"
+        if self.shuffleCheck.isChecked():
+            mode = "sf"
+        self.wd.switchBrowsingMode(mode)
 
-    def onPressRemembered(self, event):
+    def onPressRemembered(self):
         self.favDisplay.select()
         self.rd.setWordRemembered(self.wd.currentOriID, self.wd.currentWord)
 
-    def onAnswerQuiz(self, event):
+    def onAnswerQuiz(self, key):
         self.refreshAnswerItems()
-        answer = int(event.char) - 1
+        answer = int(key) - 1
         if int(self.currentQuiz["correct"]) == answer:
             # right
-            self.quizItems[answer].configure(bg="#6f6")
+            self.quizItems[answer].setStyleSheet(u'QLabel { background-color: #6f6; }')
             self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, True)
             # stat
             self.st.dateCount()
         else:
             # wrong
-            self.quizItems[answer].configure(bg="#f66")
+            self.quizItems[answer].setStyleSheet(u'QLabel { background-color: #f66; }')
             self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, False)
         self.switchWordDisplayMode(True)
         self.updateUserData()
 
     def refreshAnswerItems(self):
         for i in range(0, 4):
-            self.quizItems[i].configure(bg=self.defaultColor)
+            self.quizItems[i].setStyleSheet(u'QLabel { background-color: transparent; }')
 
     def checkWord(self, data):
         # check if remembered
@@ -185,33 +205,35 @@ class WordMaster(Tkinter.Tk):
 
     def showWord(self, data):
         # update ui
-        self.idLabelVar.set(data["oriID"])
-        self.wordLabelVar.set(data["word"])
-        self.equLabelVar.set(data["equ"])
-        self.desLabelVar.set(data["des"])
+        self.oriIDLabel.setText(QString(data["oriID"]))
+        self.wordLabel.setText(QString(data['word']))
+        self.equLabel.setText(QString(data['equ']))
+        self.desLabel.setText(QString(data['des']))
         # get quiz
         quiz = self.wd.getQuizItems()
         self.currentQuiz = quiz
         prefix = ["1.", "2.", "3.", "4."]
         for i in range(0, 4):
-            self.quizVars[i].set(prefix[i] + quiz["set"][i])
+            self.quizItems[i].setText(QString(prefix[i] + quiz['set'][i]))
         self.updateUserData()
         # get data
         if self.rd.getWordRemembered(data["oriID"], data["word"]):
-            self.favDisplay.select()
+            self.deleteCheck.setChecked(True)
         else:
-            self.favDisplay.deselect()
+            self.deleteCheck.setChecked(False)
         self.switchWordDisplayMode(False)
 
     def updateUserData(self):
         # get quiz results
         quizResult = self.rd.getQuizResult(self.wd.currentOriID, self.wd.currentWord)
-        self.quizRightVar.set(quizResult[0])
-        self.quizWrongVar.set(quizResult[1])
+        self.rightCountLabel.setText(QString(str(quizResult[0])))
+        self.wrongCountLabel.setText(QString(str(quizResult[1])))
         # load stat
-        self.todayCountVar.set(self.st.getDateCount())
+        self.countLabel.setText(QString(self.st.getDateCount()))
 
 if __name__ == "__main__":
-    wm = WordMaster(None)
-    wm.title = "WordMaster"
-    wm.mainloop()
+    app = QApplication(sys.argv)
+    wm = WordMaster()
+    sys.exit(app.exec_())
+    #wm.title = "WordMaster"
+    #wm.mainloop()
