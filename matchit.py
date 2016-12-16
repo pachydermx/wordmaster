@@ -1,13 +1,27 @@
-import sys
+import sys, copy
+import random
 from userrecorder import *
 from words import *
 from statwork import *
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 class MatchIt(QWidget):
 
     def __init__(self):
+        # argv
+        self.matchSize = 4
+        self.pairs = int((self.matchSize * self.matchSize) / 2)
+        self.answerMatrix = [0 for i in range(self.pairs * 2)]
+        self.statusMatrix = [0 for i in range(self.pairs * 2)]
+        self.selectedOne = False
+        self.selecting = -1
+
+        # stylesheets
+        self.selectingSS = "QPushButton { background-color: #81bef7; }"
+        self.rightSS = "QPushButton { background-color: #81f781; }"
+        self.wrongSS = "QPushButton { background-color: #f78181; }"
         # data
         # words
         self.wd = Words()
@@ -27,42 +41,27 @@ class MatchIt(QWidget):
 
         # gui after work
         self.setWindowTitle("WordMaster")
-        self.switchWord(1)
-        self.showMeaning = False
 
-
-        # get target
-        rdStat = self.rd.getStat()
-        self.target = self.st.getTargetD(self.wd.numOfWords, rdStat[0], rdStat[1], rdStat[2])
-        self.targetLabel.setText(QString("Target: " + str(int(self.target))))
+        self.loadWords()
 
     def initUI(self):
         # init widgets
         self.buttons = []
 
+        btnAera = QGridLayout()
+        self.buttonMatrix = []
+        for i in range(0, self.matchSize):
+            for j in range(0, self.matchSize):
+                btn = QPushButton("BTN")
+                btn.setMinimumHeight(150)
+                self.buttonMatrix.append(btn)
+                btnAera.addWidget(btn, i, j)
+
+
         self.rightCountLabel = QLabel(u'3')
         self.wrongCountLabel = QLabel(u'0')
 
         # style
-        self.oriIDLabel.setAlignment(Qt.AlignTop)
-        self.oriIDLabel.setMaximumHeight(18)
-        self.shuffleCheck.setMaximumWidth(60)
-        wordFont = QFont("Arial", 24)
-        self.wordLabel.setFont(wordFont)
-        self.wordLabel.setAlignment(Qt.AlignCenter)
-        desFont = QFont("Arial", 18)
-        self.equLabel.setFont(desFont)
-        self.equLabel.setAlignment(Qt.AlignCenter)
-        self.equLabel.setMaximumHeight(24)
-        self.desLabel.setFont(desFont)
-        self.desLabel.setAlignment(Qt.AlignCenter)
-        self.desLabel.setMaximumHeight(24)
-
-        quizFont = QFont("Arial", 18)
-        for item in self.quizItems:
-            item.setAlignment(Qt.AlignCenter)
-            item.setFont(quizFont)
-
         self.rightCountLabel.setStyleSheet(u'QLabel { background-color : #8f8; }')
         self.rightCountLabel.setAlignment(Qt.AlignCenter)
         self.wrongCountLabel.setStyleSheet(u'QLabel { background-color : #f88; }')
@@ -73,125 +72,77 @@ class MatchIt(QWidget):
 
         topToolBar = QHBoxLayout()
         topToolBar.setAlignment(Qt.AlignCenter)
-        topToolBar.addWidget(self.filterCheck)
-        topToolBar.addWidget(self.shuffleCheck)
 
         statusBar = QHBoxLayout()
-        statusBar.addWidget(self.deleteCheck)
-
-        desAera = QVBoxLayout()
-        desAera.addWidget(self.equLabel)
-        desAera.addWidget(self.desLabel)
 
         quizArea = QVBoxLayout()
         quizArea.setAlignment(Qt.AlignTop)
-        for item in self.quizItems:
-            quizArea.addWidget(item)
 
         userdataBar = QHBoxLayout()
         userdataBar.setAlignment(Qt.AlignRight)
-        userdataBar.addWidget(self.targetLabel)
-        userdataBar.addWidget(self.countLabel)
         userdataBar.addWidget(self.rightCountLabel)
         userdataBar.addWidget(self.wrongCountLabel)
 
         gridCols = 3
 
-        grid.addWidget(self.oriIDLabel, 0, 0, 1, 1)
         grid.addLayout(topToolBar, 0, 2, 1, 1)
-        grid.addWidget(self.wordLabel, 1, 0, 1, gridCols)
-        grid.addLayout(desAera, 2, 0, 1, gridCols)
-        grid.addLayout(quizArea, 3, 0, 1, gridCols)
-        grid.addLayout(statusBar, 4, 0, 1, 1)
-        grid.addLayout(userdataBar, 4, 1, 1, 2)
+        grid.addLayout(btnAera, 1, 0, 1, gridCols)
+        #grid.addLayout(statusBar, 4, 0, 1, 1)
+        #grid.addLayout(userdataBar, 4, 1, 1, 2)
 
         self.setLayout(grid)
 
         self.setGeometry(300, 300, 800, 600)
-        self.setWindowTitle("WordMaster")
+        self.setWindowTitle("MatchIt!")
 
         # add links
-        self.shuffleCheck.stateChanged.connect(self.onSwitchMode)
-        self.filterCheck.stateChanged.connect(self.onSwitchMode)
+        self.buttonMatrix[0].clicked.connect(lambda: self.onAnswerClicked(0))
+        self.buttonMatrix[1].clicked.connect(lambda: self.onAnswerClicked(1))
+        self.buttonMatrix[2].clicked.connect(lambda: self.onAnswerClicked(2))
+        self.buttonMatrix[3].clicked.connect(lambda: self.onAnswerClicked(3))
+        self.buttonMatrix[4].clicked.connect(lambda: self.onAnswerClicked(4))
+        self.buttonMatrix[5].clicked.connect(lambda: self.onAnswerClicked(5))
+        self.buttonMatrix[6].clicked.connect(lambda: self.onAnswerClicked(6))
+        self.buttonMatrix[7].clicked.connect(lambda: self.onAnswerClicked(7))
+        self.buttonMatrix[8].clicked.connect(lambda: self.onAnswerClicked(8))
+        self.buttonMatrix[9].clicked.connect(lambda: self.onAnswerClicked(9))
+        self.buttonMatrix[10].clicked.connect(lambda: self.onAnswerClicked(10))
+        self.buttonMatrix[11].clicked.connect(lambda: self.onAnswerClicked(11))
+        self.buttonMatrix[12].clicked.connect(lambda: self.onAnswerClicked(12))
+        self.buttonMatrix[13].clicked.connect(lambda: self.onAnswerClicked(13))
+        self.buttonMatrix[14].clicked.connect(lambda: self.onAnswerClicked(14))
+        self.buttonMatrix[15].clicked.connect(lambda: self.onAnswerClicked(15))
 
         self.show()
 
     def keyPressEvent(self, e):
-        if e.key() == Qt.Key_BracketLeft:
-            self.switchWord(-1)
-        if e.key() == Qt.Key_BracketRight:
-            self.switchWord(1)
-        if e.key() == Qt.Key_D:
-            self.onPressRemembered()
-        if e.key() == Qt.Key_1:
-            self.onAnswerQuiz(1)
-        if e.key() == Qt.Key_2:
-            self.onAnswerQuiz(2)
-        if e.key() == Qt.Key_3:
-            self.onAnswerQuiz(3)
-        if e.key() == Qt.Key_4:
-            self.onAnswerQuiz(4)
-        if e.key() == Qt.Key_T:
-            self.onSwitchDisplayMode()
+        pass
 
-    def switchWord(self, delta):
-        self.refreshAnswerItems()
-        data = self.wd.getNextOrPrevWord(delta)
-        while True:
-            if self.checkWord(data):
-                break
+    def onAnswerClicked(self,buttonID):
+        if not self.selectedOne:
+            # first
+            self.selecting = buttonID
+            self.selectedOne = True
+            # style
+            self.buttonMatrix[buttonID].setStyleSheet(self.selectingSS)
+            self.buttonMatrix[buttonID].setEnabled(False)
+        else:
+            # second
+            # check
+            if self.answerMatrix[buttonID] == self.answerMatrix[self.selecting]:
+                # right
+                # style
+                self.buttonMatrix[buttonID].setStyleSheet(self.rightSS)
+                self.buttonMatrix[buttonID].setEnabled(False)
+                self.buttonMatrix[self.selecting].setStyleSheet(self.rightSS)
             else:
-                data = self.wd.getNextOrPrevWord(delta)
-        self.showWord(data)
-
-    def onSwitchDisplayMode(self):
-        self.showMeaning = not self.showMeaning
-        self.switchWordDisplayMode(self.showMeaning)
-
-    def switchWordDisplayMode(self, isShowingMeanings):
-        self.showMeaning = isShowingMeanings
-        if self.showMeaning:
-            self.equLabel.setStyleSheet(u'QLabel { color: #555; }')
-            self.desLabel.setStyleSheet(u'QLabel { color: #555; }')
-        else:
-            self.equLabel.setStyleSheet(u'QLabel { color: transparent; }')
-            self.desLabel.setStyleSheet(u'QLabel { color: transparent; }')
-
-    def onSwitchMode(self):
-        # display mode
-        mode = "id"
-        if self.shuffleCheck.isChecked():
-            mode = "sf"
-        self.wd.switchBrowsingMode(mode)
-        # filter mode
-        if self.filterCheck.isChecked():
-            self.filter = True
-        else:
-            self.filter = False
-
-    def onPressRemembered(self):
-        self.favDisplay.select()
-        self.rd.setWordRemembered(self.wd.currentOriID, self.wd.currentWord)
-
-    def onAnswerQuiz(self, key):
-        self.refreshAnswerItems()
-        answer = int(key) - 1
-        if int(self.currentQuiz["correct"]) == answer:
-            # right
-            self.quizItems[answer].setStyleSheet(u'QLabel { background-color: #6f6; }')
-            self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, True)
-            # stat
-            self.st.dateCount()
-        else:
-            # wrong
-            self.quizItems[answer].setStyleSheet(u'QLabel { background-color: #f66; }')
-            self.rd.setQuizResult(self.wd.currentOriID, self.wd.currentWord, False)
-        self.switchWordDisplayMode(True)
-        self.updateUserData()
-
-    def refreshAnswerItems(self):
-        for i in range(0, 4):
-            self.quizItems[i].setStyleSheet(u'QLabel { background-color: transparent; }')
+                # wrong
+                # style
+                self.buttonMatrix[buttonID].setStyleSheet(self.wrongSS)
+                self.buttonMatrix[self.selecting].setStyleSheet(self.wrongSS)
+                self.buttonMatrix[self.selecting].setEnabled(True)
+            self.selecting = -1
+            self.selectedOne = False
 
     def checkWord(self, data):
         # check if remembered
@@ -205,33 +156,50 @@ class MatchIt(QWidget):
                     return False
             return True
 
-    def showWord(self, data):
-        # update ui
-        self.oriIDLabel.setText(QString(data["oriID"]))
-        self.wordLabel.setText(QString(data['word']))
-        self.equLabel.setText(QString(data['equ']))
-        self.desLabel.setText(QString(data['des']))
-        # get quiz
-        quiz = self.wd.getQuizItems()
-        self.currentQuiz = quiz
-        prefix = ["1.", "2.", "3.", "4."]
-        for i in range(0, 4):
-            self.quizItems[i].setText(QString(prefix[i] + quiz['set'][i]))
-        self.updateUserData()
-        # get data
-        if self.rd.getWordRemembered(data["oriID"], data["word"]):
-            self.deleteCheck.setChecked(True)
-        else:
-            self.deleteCheck.setChecked(False)
-        self.switchWordDisplayMode(False)
+    def grabWord(self):
+        data = self.wd.getWordShuffle()
+        while True:
+            if self.checkWord(data):
+                break
+            else:
+                data = self.wd.getWordShuffle()
+        return data
 
-    def updateUserData(self):
-        # get quiz results
-        quizResult = self.rd.getQuizResult(self.wd.currentOriID, self.wd.currentWord)
-        self.rightCountLabel.setText(QString(str(quizResult[0])))
-        self.wrongCountLabel.setText(QString(str(quizResult[1])))
-        # load stat
-        self.countLabel.setText(QString(self.st.getDateCount()))
+    def loadWords(self):
+        self.currentWords = [self.grabWord()]
+        for i in range(0, self.pairs - 1):
+            newWord = self.grabWord()
+            while True:
+                exist = False
+                for eachWord in self.currentWords:
+                    if newWord["oriID"] == eachWord["oriID"] and newWord["word"] == eachWord["word"]:
+                        exist = True
+                if exist:
+                    newWord = self.grabWord()
+                else:
+                    self.currentWords.append(newWord)
+                    break
+        self.showWords()
+
+    def showWords(self):
+        # get order
+        order = []
+        for i in range(0, self.pairs * 2):
+            order.append(i)
+        random.shuffle(order)
+        # assign words
+        for i in range(self.pairs * 2):
+            if order[i] < self.pairs:
+                # word
+                wordID = order[i]
+                self.buttonMatrix[i].setText(self.currentWords[wordID]["word"])
+                self.answerMatrix[i] = wordID
+            else:
+                # equ
+                wordID = order[i] - self.pairs
+                self.buttonMatrix[i].setText(self.currentWords[wordID]["equ"])
+                self.answerMatrix[i] = wordID
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

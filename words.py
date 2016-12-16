@@ -31,6 +31,9 @@ class Words:
         if self.browseMode == "sf":
             return self.readWord(random.randint(0, self.numOfWords))
 
+    def getWordShuffle(self):
+        return self.readWord(random.randint(0, self.numOfWords))
+
     def getQuizItems(self):
         result = []
         correct = random.randint(0, 3)

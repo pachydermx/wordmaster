@@ -2,6 +2,7 @@ import sys
 from userrecorder import *
 from words import *
 from statwork import *
+from matchit import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -42,6 +43,7 @@ class WordMaster(QWidget):
         self.oriIDLabel = QLabel(u'199.')
         self.shuffleCheck = QCheckBox(u'Shuffle')
         self.filterCheck = QCheckBox(u'New Words Only')
+        matchitButton = QPushButton("MatchIt!")
 
         self.wordLabel = QLabel(u'Example Word')
         self.equLabel = QLabel(u'Example Equ')
@@ -92,6 +94,7 @@ class WordMaster(QWidget):
         topToolBar.setAlignment(Qt.AlignCenter)
         topToolBar.addWidget(self.filterCheck)
         topToolBar.addWidget(self.shuffleCheck)
+        topToolBar.addWidget(matchitButton)
 
         statusBar = QHBoxLayout()
         statusBar.addWidget(self.deleteCheck)
@@ -130,6 +133,7 @@ class WordMaster(QWidget):
         # add links
         self.shuffleCheck.stateChanged.connect(self.onSwitchMode)
         self.filterCheck.stateChanged.connect(self.onSwitchMode)
+        matchitButton.clicked.connect(self.onClickMatchIt)
 
         self.show()
 
@@ -150,6 +154,9 @@ class WordMaster(QWidget):
             self.onAnswerQuiz(4)
         if e.key() == Qt.Key_T:
             self.onSwitchDisplayMode()
+
+    def onClickMatchIt(self):
+        mt = MatchIt()
 
     def switchWord(self, delta):
         self.refreshAnswerItems()
