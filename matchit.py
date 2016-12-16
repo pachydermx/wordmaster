@@ -5,7 +5,7 @@ from statwork import *
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-class WordMaster(QWidget):
+class MatchIt(QWidget):
 
     def __init__(self):
         # data
@@ -22,7 +22,7 @@ class WordMaster(QWidget):
         self.pad = 10
 
         # gui (qt)
-        super(WordMaster, self).__init__()
+        super(MatchIt, self).__init__()
         self.initUI()
 
         # gui after work
@@ -38,24 +38,8 @@ class WordMaster(QWidget):
 
     def initUI(self):
         # init widgets
-        self.oriIDLabel = QLabel(u'199.')
-        self.shuffleCheck = QCheckBox(u'Shuffle')
-        self.filterCheck = QCheckBox(u'New Words Only')
+        self.buttons = []
 
-        self.wordLabel = QLabel(u'Example Word')
-        self.equLabel = QLabel(u'Example Equ')
-        self.desLabel = QLabel(u'Description')
-
-        quizItem1 = QLabel(u'1. Answer1')
-        quizItem2 = QLabel(u'2. Answer2')
-        quizItem3 = QLabel(u'3. Answer3')
-        quizItem4 = QLabel(u'4. Answer4')
-        self.quizItems = [quizItem1, quizItem2, quizItem3, quizItem4]
-
-        self.deleteCheck = QCheckBox(u'Delete this word')
-
-        self.targetLabel = QLabel(u'Target: 1')
-        self.countLabel = QLabel(u'Count: 299')
         self.rightCountLabel = QLabel(u'3')
         self.wrongCountLabel = QLabel(u'0')
 
@@ -251,7 +235,7 @@ class WordMaster(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    wm = WordMaster()
+    mi = MatchIt()
     sys.exit(app.exec_())
     #wm.title = "WordMaster"
     #wm.mainloop()
