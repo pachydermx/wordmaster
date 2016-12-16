@@ -6,12 +6,12 @@ class Stat:
         self.load()
 
     def load(self):
-        with open('misc.txt') as data_file:
+        with open('misc.txt', "r", encoding="utf-8") as data_file:
             self.data = json.load(data_file)
 
     def save(self):
         with io.open("misc.txt", "w", encoding="utf-8") as f:
-            f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
+            f.write(json.dumps(self.data, ensure_ascii=False))
 
     def getDateCount(self):
         # type: () -> object
